@@ -1,7 +1,6 @@
 /*
  * io复用实现文件
- * 2023-04-10   创建，写入设置noblock的函数
- * */
+ * 2023-04-10   创建，写入设置noblock的函� * */
 
 #include <stdio.h>
 #include <unistd.h>
@@ -22,7 +21,7 @@
 #include <pthread.h>
 
 
-#include "../http/http_parse.h"
+#include "../http/http_conn.h"
 #include "zr_io.h"
 #include "../util/util.h"
 
@@ -46,7 +45,7 @@ int setnoblock(int fd) {
 
 /* 将fd和其事件添加到epoll事件表中
  * @ et:        是否开ET模式
- * @ oneshot：  是否注册EPOLLONESHOT事件，注意该事件的前提是ET模式
+ * @ oneshot� 是否注册EPOLLONESHOT事件，注意该事件的前提是ET模式
  * */
 void addfd(int epollfd, int fd, bool et, bool oneshot) {
     struct epoll_event event;
@@ -123,7 +122,7 @@ void *worker(void *arg) {
             }
         } else {
             printf("get content: %s\n", buf);
-            /* 休眠5s，模拟数据处理过程 */
+            /* 休眠5s，模拟数据处理过�*/
             sleep(5);
         }
     }
@@ -132,7 +131,7 @@ void *worker(void *arg) {
 }
 #endif
 
-/* main入口函数只能有一个，加上条件宏，在makefile编译时指定 */
+/* main入口函数只能有一个，加上条件宏，在makefile编译时指�*/
 #ifdef IO_MAIN
 int main(int argc, char *argv[])
 {

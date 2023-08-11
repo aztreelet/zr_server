@@ -2,12 +2,11 @@
 #define HTTP_CONN_H
 
 /* 
- * 时间：20230625
+ * 时间�0230625
  * 功能：处理http连接请求
  * 版本：V1.0
  * 参考：游双P304
  * */
-#include <bits/types/struct_iovec.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -22,14 +21,12 @@
 //#include "http_parse.h"
 
 
-//文件名的最大长度
-#define FILENAME_LEN        200
+//文件名的最大长�#define FILENAME_LEN        200
 #define READ_BUFFER_SIZE    2048
 #define WRITE_BUFFER_SIZE   1024
 
 /* 定义主状态机，表示状态：
- *      1. 当前正在分析请求行
- *      2. 正在分析头部字段
+ *      1. 当前正在分析请求� *      2. 正在分析头部字段
  *      1 --> 2
  * */
 typedef enum CHECK_STATE {
@@ -39,10 +36,7 @@ typedef enum CHECK_STATE {
 } CHECK_STATE_t;
 
 /* 从状态机，表示状态：
- *      1. 读到完整行
- *      2. 行出错
- *      3. 正在读取行数据
- * */
+ *      1. 读到完整� *      2. 行出� *      3. 正在读取行数� * */
 typedef enum LINE_STATUS {
     LINE_OK = 0,
     LINE_BAD,
@@ -51,14 +45,9 @@ typedef enum LINE_STATUS {
 
 /* 
  * 从状态机，http头状态，表示状态：
- *      1. 请求不完整，需要继续读取
- *      2. 无请求的文件
- *      3. 获得完整的客户请求
- *      4. 客户请求有语法错误
- *      5. 客户对资源无访问权限
- *      6. 服务器内部错误
- *      7. 客户端已经关闭连接
- * */
+ *      1. 请求不完整，需要继续读� *      2. 无请求的文件
+ *      3. 获得完整的客户请� *      4. 客户请求有语法错� *      5. 客户对资源无访问权限
+ *      6. 服务器内部错� *      7. 客户端已经关闭连� * */
 typedef enum HTTP_CODE {
     NO_REQUEST = 0,
     NO_RESOURCE,
@@ -103,12 +92,12 @@ typedef struct
     char                m_read_buffer[ READ_BUFFER_SIZE ];
     int                 m_read_idx;
     int                 m_check_idx;
-    /* 正在解析的行的起始位置 */
+    /* 正在解析的行的起始位�*/
     int                 m_start_line;
     char                m_write_buffer[ WRITE_BUFFER_SIZE ];
     int                 m_write_idx;
 
-    /*** 状态机状态相关 */
+    /*** 状态机状态相�*/
     /* the main statemeahine`s state */
     CHECK_STATE_t       m_check_state;
     /* the request method */
@@ -120,20 +109,17 @@ typedef struct
     char*   m_url;
     char*   m_version;
     char*   m_host;
-    //http请求的消息体的长度
-    int     m_content_length;
+    //http请求的消息体的长�    int     m_content_length;
     //HTTP请求是否要求保持连接
     bool    m_linger;
 
     /* 共享内存相关 */
     //文件被mmap的内存地址
     char*   m_file_address;
-    //目标文件状态
-    struct stat m_file_stat;
-    /* 使用writev分块写，相关如下：*/
+    //目标文件状�    struct stat m_file_stat;
+    /* 使用writev分块写，相关如下�/
     struct iovec    m_iv[2];
-    //总块数
-    int             m_iv_count;
+    //总块�    int             m_iv_count;
 
 } HTTP_CONN_t;
 

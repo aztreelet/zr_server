@@ -1,5 +1,16 @@
+## 简介
 
-## 项目简介
+```
+├─cgi			# 未实现
+├─docs		# 文档和流程图	
+├─http    # http解析源码
+├─io      # io相关源码
+├─server  # 服务器主程序源码
+├─thread_pool		# 线程池实现源码
+├─util		# 一些工具函数源码
+└─Makefile	# $ make 可编译工程
+```
+
 参考游双《高性能服务器编程》实现的简单webserver，游双书中是C++版本，这里使用纯C语言实现，其中对于各种指针的运用，看起来简单，一试便出问题，整体写下来很提高C语言以及逻辑思维能力。并且整体项目难度不大，适合作为练习C语言、以及linux高级编程的入门练手项目；
 
 **本项目知识点**：
@@ -11,7 +22,74 @@
 * 处理GET请求文件使用mmap内存映射，使用writev来同时向客户fd写入应到报文和文件内容；
 * 通用的Makefile框架；
 
-## 详细解析
+## 使用
+
+1. 设置server默认路径和`index.html`文件（用于测试），修改`http_conn.h`中的`doc_root`变量：
+
+```c
+/* 以下为默认路径，存放网站源码（修改为自定义的网站源码路径） */
+const char *doc_root = "/home/zhai/www/html"
+```
+
+2. 如果你没网站源码，可使用如下`index.html`源码，放到上述路径下`/home/zhai/www/html/index.html`：
+
+```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Zree</title>
+	</head>
+	<body>
+		<h1>zr_webserver</h1>
+		<p>Hello World!</p>
+	</body>
+</html>
+```
+
+3. 编译
+
+```
+# 进入工程下，创建build文件夹
+$ mkdir build
+# 编译生成server程序
+$ make
+```
+
+会生成`webserver`程序；
+
+4. 运行测试
+
+```shell
+# 添加执行权限
+$ sudo chmod +x webserver
+$ ./webserver <your_ip> <port>
+```
+
+然后可以另开终端，使用telnet或者浏览器连接webserver进行测试，
+
+使用telnet连接测试：
+
+```shell
+# 输入ip和port，启动telnet
+# 然后手动输入http请求信息,然后敲两个回车
+$ telnet <your_ip> <port>
+GET /index.html HTTP/1.1
+
+```
+
+![image-20230811160017162](assets/image-20230811160017162.png)
+
+使用浏览器测试，导航栏输入`<ip>:<port>/index.html`：
+
+![image-20230811155635560](assets/image-20230811155635560.png)
+
+**注**：只适用于linux环境，ubuntu16测试通过；
+
+
+
+## 详解
+
+整体流程：
 
 ![主流程图](./docs/assets/http_conn流程.png)
 
