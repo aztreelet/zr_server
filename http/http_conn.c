@@ -25,7 +25,7 @@
 #include "http_conn.h"
 
 
-/* 定义一些http协议的响应信�*/
+/* 定义一些http协议的响应信息 */
 const char *ok_200_title = "OK";
 const char *error_400_title = "Bad Request";
 const char *error_400_form = "Your request has bad syntax o ris inherently impossible to satisfy.\n"; 
@@ -36,7 +36,7 @@ const char *error_404_form = "The requested file was not found on this server.\n
 const char *error_500_title = "Internal Error";
 const char *error_500_form = "There was an unusual problem serving the requesred file.\n";
 
-/* 网站文件根目�*/
+/* 网站文件根目录 */
 //const char *doc_root = "/var/www/html";
 const char *doc_root = "/home/zhai/www/html";
 
@@ -56,13 +56,13 @@ void http_conn_init(HTTP_CONN_t *http_connect, int *epollfd, int *user_count, in
 {   
     /* 创建静态http_connect */
     //static HTTP_CONN_t http_connect;
-    /* 初始化该结构�*/
+    /* 初始化该结构体 */
     /* 一些属性初始化 */
     http_connect->m_max_file_name_len = FILENAME_MAX;
     http_connect->m_read_buffer_size = READ_BUFFER_SIZE;
     http_connect->m_write_buffer_size = WRITE_BUFFER_SIZE;
     //method
-    /* 事件组fd和用户总数初始�*/
+    /* 事件组fd和用户总数初始化 */
     http_connect->m_epollfd = epollfd;
     http_connect->m_user_count = user_count;
 
@@ -181,7 +181,8 @@ LINE_STATUS_t http_conn_parse_line(HTTP_CONN_t *http_connect)
 
                 return LINE_OK;
             }
-            //\r后面不是\n，说明存在语法问�            return LINE_BAD;
+            //\r后面不是\n，说明存在语法问题
+            return LINE_BAD;
 
         } else if (temp == '\n') {
             if ((http_connect->m_check_idx > 1) && (http_connect->m_read_buffer[http_connect->m_check_idx - 1] == '\r')){
@@ -607,7 +608,8 @@ void http_conn_process(HTTP_CONN_t *hct)
     HTTP_CODE_t read_ret = http_conn_process_read(hct);
     if (read_ret == NO_REQUEST) {
         /* *的优先级大于-> */
-        //modfd(*hct->m_epollfd, hct->m_sockfd, EPOLLIN); 留下以作警示�        //zr_printf(DEBUG, "epollfd: %d", *(hct->m_epollfd));
+        //modfd(*hct->m_epollfd, hct->m_sockfd, EPOLLIN); 留下以作警示；
+        //zr_printf(DEBUG, "epollfd: %d", *(hct->m_epollfd));
         modfd(*(hct->m_epollfd), hct->m_sockfd, EPOLLIN);
         return;
     }

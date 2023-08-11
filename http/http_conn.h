@@ -2,10 +2,10 @@
 #define HTTP_CONN_H
 
 /* 
- * æ—¶é—´ï¼0230625
- * åŠŸèƒ½ï¼šå¤„ç†httpè¿žæŽ¥è¯·æ±‚
- * ç‰ˆæœ¬ï¼šV1.0
- * å‚è€ƒï¼šæ¸¸åŒP304
+ * Ê±¼ä£º20230625
+ * ¹¦ÄÜ£º´¦ÀíhttpÁ¬½ÓÇëÇó
+ * °æ±¾£ºV1.0
+ * ²Î¿¼£ºÓÎË«P304
  * */
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -21,12 +21,14 @@
 //#include "http_parse.h"
 
 
-//æ–‡ä»¶åçš„æœ€å¤§é•¿åº#define FILENAME_LEN        200
+//ÎÄ¼þÃûµÄ×î´ó³¤¶È
+#define FILENAME_LEN        200
 #define READ_BUFFER_SIZE    2048
 #define WRITE_BUFFER_SIZE   1024
 
-/* å®šä¹‰ä¸»çŠ¶æ€æœºï¼Œè¡¨ç¤ºçŠ¶æ€ï¼š
- *      1. å½“å‰æ­£åœ¨åˆ†æžè¯·æ±‚è¡ *      2. æ­£åœ¨åˆ†æžå¤´éƒ¨å­—æ®µ
+/* ¶¨ÒåÖ÷×´Ì¬»ú£¬±íÊ¾×´Ì¬£º
+ *      1. µ±Ç°ÕýÔÚ·ÖÎöÇëÇóÐÐ
+ *      2. ÕýÔÚ·ÖÎöÍ·²¿×Ö¶Î
  *      1 --> 2
  * */
 typedef enum CHECK_STATE {
@@ -35,8 +37,11 @@ typedef enum CHECK_STATE {
     CHECK_STATE_CONETNT,
 } CHECK_STATE_t;
 
-/* ä»ŽçŠ¶æ€æœºï¼Œè¡¨ç¤ºçŠ¶æ€ï¼š
- *      1. è¯»åˆ°å®Œæ•´è¡ *      2. è¡Œå‡ºé” *      3. æ­£åœ¨è¯»å–è¡Œæ•°æ * */
+/* ´Ó×´Ì¬»ú£¬±íÊ¾×´Ì¬£º
+ *      1. ¶Áµ½ÍêÕûÐÐ
+ *      2. ÐÐ³ö´í
+ *      3. ÕýÔÚ¶ÁÈ¡ÐÐÊý¾Ý
+ * */
 typedef enum LINE_STATUS {
     LINE_OK = 0,
     LINE_BAD,
@@ -44,10 +49,16 @@ typedef enum LINE_STATUS {
 } LINE_STATUS_t;
 
 /* 
- * ä»ŽçŠ¶æ€æœºï¼Œhttpå¤´çŠ¶æ€ï¼Œè¡¨ç¤ºçŠ¶æ€ï¼š
- *      1. è¯·æ±‚ä¸å®Œæ•´ï¼Œéœ€è¦ç»§ç»­è¯»å *      2. æ— è¯·æ±‚çš„æ–‡ä»¶
- *      3. èŽ·å¾—å®Œæ•´çš„å®¢æˆ·è¯·æ± *      4. å®¢æˆ·è¯·æ±‚æœ‰è¯­æ³•é”™è¯ *      5. å®¢æˆ·å¯¹èµ„æºæ— è®¿é—®æƒé™
- *      6. æœåŠ¡å™¨å†…éƒ¨é”™è¯ *      7. å®¢æˆ·ç«¯å·²ç»å…³é—­è¿žæŽ * */
+ * ´Ó×´Ì¬»ú£¬httpÍ·×´Ì¬£¬±íÊ¾×´Ì¬£º
+ *      1. ÇëÇó²»ÍêÕû£¬ÐèÒª¼ÌÐø¶ÁÈ¡
+ *      2. ÎÞÇëÇóµÄÎÄ¼þ
+ *      3. »ñµÃÍêÕûµÄ¿Í»§ÇëÇó
+ *      4. ¿Í»§ÇëÇóÓÐÓï·¨´íÎó
+ *		5. ÊÕµ½ÎÄ¼þÇëÇó
+ *      6. ¿Í»§¶Ô×ÊÔ´ÎÞ·ÃÎÊÈ¨ÏÞ
+ *      7. ·þÎñÆ÷ÄÚ²¿´íÎó
+ *      8. ¿Í»§¶ËÒÑ¾­¹Ø±ÕÁ¬½Ó
+ * */
 typedef enum HTTP_CODE {
     NO_REQUEST = 0,
     NO_RESOURCE,
@@ -59,8 +70,8 @@ typedef enum HTTP_CODE {
     CLOSED_CONNECTION,
 }HTTP_CODE_t;
 
-//è¯·æ±‚æ–¹æ³•
-//æœ¬ç¨‹åºåªæ”¯æŒGET
+//ÇëÇó·½·¨
+//±¾³ÌÐòÖ»Ö§³ÖGET
 typedef enum {
     GET = 0,
     POST,
@@ -75,9 +86,9 @@ typedef enum {
 
 typedef struct
 {
-    //æœ€å¤§æ–‡ä»¶é•¿åº¦ï¼Œ=FILENAME_LEN
+    //×î´óÎÄ¼þ³¤¶È£¬=FILENAME_LEN
     int       m_max_file_name_len;
-    //è¯»ç¼“å†²åŒºå¤§å°
+    //¶Á»º³åÇø´óÐ¡
     int       m_read_buffer_size;
     int       m_write_buffer_size;
 
@@ -92,39 +103,42 @@ typedef struct
     char                m_read_buffer[ READ_BUFFER_SIZE ];
     int                 m_read_idx;
     int                 m_check_idx;
-    /* æ­£åœ¨è§£æžçš„è¡Œçš„èµ·å§‹ä½ç½*/
+    /* ÕýÔÚ½âÎöµÄÐÐµÄÆðÊ¼Î»ÖÃ */
     int                 m_start_line;
     char                m_write_buffer[ WRITE_BUFFER_SIZE ];
     int                 m_write_idx;
 
-    /*** çŠ¶æ€æœºçŠ¶æ€ç›¸å…*/
+    /*** ×´Ì¬»ú×´Ì¬Ïà¹Ø */
     /* the main statemeahine`s state */
     CHECK_STATE_t       m_check_state;
     /* the request method */
     METHOD_t            m_method;
     
-    /* å®Œæ•´è·¯å¾„åï¼ŒåŒ…å«path+filename */
+    /* ÍêÕûÂ·¾¶Ãû£¬°üº¬path+filename */
     char    m_real_file[ FILENAME_LEN ];
-    /* ä»¥ä¸‹éƒ½æ˜¯char*ç±»åž‹ï¼ŒæŒ‡å‘httpæŠ¥æ–‡ä¸­å“åº”çš„ä½ç½® */
+    /* ÒÔÏÂ¶¼ÊÇchar*ÀàÐÍ£¬Ö¸Ïòhttp±¨ÎÄÖÐÏìÓ¦µÄÎ»ÖÃ */
     char*   m_url;
     char*   m_version;
     char*   m_host;
-    //httpè¯·æ±‚çš„æ¶ˆæ¯ä½“çš„é•¿åº    int     m_content_length;
-    //HTTPè¯·æ±‚æ˜¯å¦è¦æ±‚ä¿æŒè¿žæŽ¥
+    //httpÇëÇóµÄÏûÏ¢ÌåµÄ³¤¶È
+    int     m_content_length;
+    //HTTPÇëÇóÊÇ·ñÒªÇó±£³ÖÁ¬½Ó
     bool    m_linger;
 
-    /* å…±äº«å†…å­˜ç›¸å…³ */
-    //æ–‡ä»¶è¢«mmapçš„å†…å­˜åœ°å€
+    /* ¹²ÏíÄÚ´æÏà¹Ø */
+    //ÎÄ¼þ±»mmapµÄÄÚ´æµØÖ·
     char*   m_file_address;
-    //ç›®æ ‡æ–‡ä»¶çŠ¶æ€    struct stat m_file_stat;
-    /* ä½¿ç”¨writevåˆ†å—å†™ï¼Œç›¸å…³å¦‚ä¸‹ï¼/
+    //Ä¿±êÎÄ¼þ×´Ì¬
+    struct stat m_file_stat;
+    /* Ê¹ÓÃwritev·Ö¿éÐ´£¬Ïà¹ØÈçÏÂ£º*/
     struct iovec    m_iv[2];
-    //æ€»å—æ•    int             m_iv_count;
+    //×Ü¿éÊý
+    int             m_iv_count;
 
 } HTTP_CONN_t;
 
 
-/************** å‡½æ•°æŽ¥å£  ******************/
+/************** º¯Êý½Ó¿Ú  ******************/
 /* Init and set sockfd noblock.
  * @http_connect: addr of HTTP_CONN_T that has be malloced.
  * @epollfd, user_count: Note that they are points, because the var used by all users.

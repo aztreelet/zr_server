@@ -34,7 +34,7 @@ typedef struct {
 } fds;
 
 
-/* 灏唂d璁剧疆涓洪潪闃诲 */
+/* 将fd设置为非阻塞 */
 int setnoblock(int fd) {
     int old_option = fcntl(fd, F_GETFL);
     int new_option = old_option | O_NONBLOCK;
@@ -43,14 +43,14 @@ int setnoblock(int fd) {
     return old_option;
 }
 
-/* 灏唂d鍜屽叾浜嬩欢娣诲姞鍒癳poll浜嬩欢琛ㄤ腑
- * @ et:        鏄惁寮�ET妯″紡
- * @ oneshot锛 鏄惁娉ㄥ唽EPOLLONESHOT浜嬩欢锛屾敞鎰忚浜嬩欢鐨勫墠鎻愭槸ET妯″紡
+/* 将fd和其事件添加到epoll事件表中
+ * @ et:        是否开ET模式
+ * @ oneshot：  是否注册EPOLLONESHOT事件，注意该事件的前提是ET模式
  * */
 void addfd(int epollfd, int fd, bool et, bool oneshot) {
     struct epoll_event event;
     event.data.fd = fd;
-    /* EPOLLRDHUP涓哄绔垨杩炴帴鍏抽棴浜嬩欢 */
+    /* EPOLLRDHUP为对端或连接关闭事件 */
     event.events = EPOLLIN | EPOLLRDHUP;
 
     if (oneshot) {
@@ -87,7 +87,7 @@ void modfd(int epollfd, int fd, int ev)
 }
 
 
-/* 閲嶇疆EPOLLONESHOT浜嬩欢 */
+/* 重置EPOLLONESHOT事件 */
 void reset_oneshot(int epollfd, int fd) {
     struct epoll_event event;
     event.data.fd = fd;
@@ -96,8 +96,8 @@ void reset_oneshot(int epollfd, int fd) {
 }
 
 #if 0
-/* 宸ヤ綔绾跨▼妗嗘灦 
- * @ arg:        鍙傛暟锛岄渶瑕佸己杞垚闇�瑕佺殑绫诲瀷
+/* 工作线程框架 
+ * @ arg:        参数，需要强转成需要的类型
  * */
 void *worker(void *arg) {
     int sockfd = ((fds*)arg)->sockfd;
@@ -122,7 +122,7 @@ void *worker(void *arg) {
             }
         } else {
             printf("get content: %s\n", buf);
-            /* 浼戠湢5s锛屾ā鎷熸暟鎹鐞嗚繃绋*/
+            /* 休眠5s，模拟数据处理过程 */
             sleep(5);
         }
     }
@@ -131,7 +131,7 @@ void *worker(void *arg) {
 }
 #endif
 
-/* main鍏ュ彛鍑芥暟鍙兘鏈変竴涓紝鍔犱笂鏉′欢瀹忥紝鍦╩akefile缂栬瘧鏃舵寚瀹*/
+/* main入口函数只能有一个，加上条件宏，在makefile编译时指定 */
 #ifdef IO_MAIN
 int main(int argc, char *argv[])
 {
